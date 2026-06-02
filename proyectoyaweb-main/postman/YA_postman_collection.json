@@ -1,0 +1,233 @@
+{
+  "info": {
+    "name": "Proyecto YA! - Simulación de flujo completo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para simular el flujo de mesa, pedido, pago y cálculo de tiempos en el backend del proyecto.",
+    "_postman_id": "c98d3f70-7f7a-4b24-8147-9ca9a37d2f7b"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:10000"
+    },
+    {
+      "key": "mesa_id",
+      "value": "7"
+    },
+    {
+      "key": "pin",
+      "value": "123"
+    },
+    {
+      "key": "order_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1 - Verificar restaurante",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/verify-code",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "verify-code"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"YaYoungFuture5\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2 - Login dueño",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo_usuario\": \"hola@gmail.com\",\n  \"contra\": \"1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "3 - Ocupar mesa",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/mesas/{{mesa_id}}/ocupar",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mesas", "{{mesa_id}}", "ocupar"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const data = pm.response.json();",
+              "if (data.codigo) { pm.collectionVariables.set('pin', data.codigo); }",
+              "pm.test('Se obtuvo PIN', () => pm.expect(data).to.have.property('codigo'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - Obtener menú móvil",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/movil/menu?restaurant_id=1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "movil", "menu"],
+          "query": [
+            { "key": "restaurant_id", "value": "1" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "5 - Crear pedido móvil",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/movil/pedido",
+          "host": ["{{base_url}}"],
+          "path": ["api", "movil", "pedido"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pin\": {{pin}},\n  \"items\": [\n    { \"id_producto\": 3, \"cantidad\": 1 }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const data = pm.response.json();",
+              "if (data.id_pedido) { pm.collectionVariables.set('order_id', data.id_pedido); }",
+              "pm.test('Pedido creado', () => pm.expect(data).to.have.property('id_pedido'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6 - Marcar pedido en proceso",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/pedidos/{{order_id}}/estado",
+          "host": ["{{base_url}}"],
+          "path": ["api", "pedidos", "{{order_id}}", "estado"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nuevoEstado\": \"en proceso\"\n}"
+        }
+      }
+    },
+    {
+      "name": "7 - Marcar pedido completado",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/pedidos/{{order_id}}/estado",
+          "host": ["{{base_url}}"],
+          "path": ["api", "pedidos", "{{order_id}}", "estado"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nuevoEstado\": \"completado\"\n}"
+        }
+      }
+    },
+    {
+      "name": "8 - Pedir cuenta desde móvil",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/movil/cuenta",
+          "host": ["{{base_url}}"],
+          "path": ["api", "movil", "cuenta"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pin\": {{pin}},\n  \"metodo_pago\": \"efectivo\"\n}"
+        }
+      }
+    },
+    {
+      "name": "9 - Registrar pago final",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/pedidos/{{order_id}}/estado",
+          "host": ["{{base_url}}"],
+          "path": ["api", "pedidos", "{{order_id}}", "estado"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nuevoEstado\": \"inactivo\"\n}"
+        }
+      }
+    },
+    {
+      "name": "10 - Liberar mesa",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/mesas/{{mesa_id}}/liberar",
+          "host": ["{{base_url}}"],
+          "path": ["api", "mesas", "{{mesa_id}}", "liberar"]
+        }
+      }
+    },
+    {
+      "name": "11 - Ver dashboard financiero",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/api/finanzas/dashboard",
+          "host": ["{{base_url}}"],
+          "path": ["api", "finanzas", "dashboard"]
+        }
+      }
+    }
+  ]
+}

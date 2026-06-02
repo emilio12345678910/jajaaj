@@ -1,0 +1,36 @@
+
+{
+  "expo": {
+    "name": "Ya! - App de Pedidos",
+    "slug": "ya-app-de-pedidos-slug",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    
+    "icon": "./assets/app-icon.png", 
+    
+    "userInterfaceStyle": "light",
+    
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/app-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

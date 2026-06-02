@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mi Restaurante</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="paginaRestaurante">
+
+    <div class="contenedorRestaurante">
+        
+        <aside class="panelLateral">
+            <h2 class="logo">Mi Restaurante</h2>
+            <nav class="menu">
+                <ul>
+                    <li><a href="#" data-target="panelProductos" data-seccion="productos"><ion-icon name="fast-food-outline"></ion-icon> Productos</a></li>
+                    <li><a href="#" data-target="panelIngredientes" data-seccion="ingredientes"><ion-icon name="leaf-outline"></ion-icon> Ingredientes</a></li>
+                    <li><a href="#" data-target="panelMesas" data-seccion="mesas"><ion-icon name="grid-outline"></ion-icon> Mesas</a></li>
+                    <li><a href="#" data-target="panelEmpleados" data-seccion="empleados"><ion-icon name="people-outline"></ion-icon> Empleados</a></li>
+                    <li><a href="#" data-target="panelFinanzas" data-seccion="finanzas"><ion-icon name="cash-outline"></ion-icon> Finanzas</a></li>
+                    <li><a href="#" data-target="panelPedidosCompletados" data-seccion="pedidos_completados"><ion-icon name="checkmark-done-outline"></ion-icon> Historial</a></li>
+                    <li><a href="#" data-target="panelIA" data-seccion="ia"><ion-icon name="sparkles-outline"></ion-icon> Asistente IA</a></li>
+                </ul>
+            </nav>
+            <button class="boton botonSalir">Cerrar sesión</button>
+        </aside>
+
+        <main class="contenidoPrincipal">
+
+            <div id="panelBienvenida" class="panelBienvenida">
+                <ion-icon name="restaurant-outline"></ion-icon>
+                <h2>Elige una opción</h2>
+                <p>Selecciona una categoría del panel para comenzar.</p>
+            </div>
+
+            <div id="panelProductos" class="panelContenido oculto" data-seccion="productos">
+                <h1 class="seccion">Gestión de Productos</h1>
+                <div class="contenedorAcciones">
+                    <button class="boton botonAgregar">Agregar</button>
+                    <button class="boton botonEditar" disabled>Editar</button>
+                    <button class="boton botonEliminar" disabled>Eliminar</button>
+                </div>
+                <table class="tablaDatos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="panelIngredientes" class="panelContenido oculto" data-seccion="ingredientes">
+                <h1 class="seccion">Gestión de Ingredientes</h1>
+                <div class="contenedorAcciones">
+                    <button class="boton botonAgregar">Agregar Insumo</button>
+                    <button class="boton botonEditar" disabled>Editar Datos</button>
+                    <button class="boton botonEliminar" disabled>Eliminar</button>
+                    <button class="boton botonCrd" id="btnGestionarLotes" style="background-color: #3498db; color: white;" disabled>
+                        <ion-icon name="cube-outline"></ion-icon> Gestionar Lotes
+                    </button>
+                </div>
+                <table class="tablaDatos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Unidad Base</th> 
+                            <th>Total Neto</th>  
+                            <th>Stock (Envases)</th> 
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="panelMesas" class="panelContenido oculto" data-seccion="mesas">
+                <h1 class="seccion">Configuración de Mesas</h1>
+                <p style="text-align: center; color: #666; margin-bottom: 20px;">Aquí defines cuántas mesas físicas existen en tu local.</p>
+                <div class="contenedorAcciones">
+                    <button class="boton botonAgregar">Nueva Mesa</button>
+                    <button class="boton botonEliminar" disabled>Eliminar Mesa</button>
+                </div>
+                <table class="tablaDatos">
+                    <thead>
+                        <tr>
+                            <th>Número / Nombre</th>
+                            <th>Estado Actual</th>
+                            <th>Código Sesión</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="panelEmpleados" class="panelContenido oculto" data-seccion="empleados">
+                <h1 class="seccion">Gestión de Empleados</h1>
+                <div class="contenedorAcciones">
+                    <button class="boton botonAgregar">Agregar</button>
+                    <button class="boton botonEditar" disabled>Editar</button>
+                    <button class="boton botonEliminar" disabled>Eliminar</button>
+                </div>
+                <table class="tablaDatos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Rol</th>
+                            <th>Sueldo</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div id="panelFinanzas" class="panelContenido oculto" data-seccion="finanzas">
+                <h1 class="seccion">Dashboard Financiero y Operativo</h1>
+                
+                <div class="acciones-finanzas" style="margin-bottom: 20px; display:flex; justify-content:center; gap:10px;">
+                    <button class="boton" id="btnRegistrarGastoExtra">Registrar Gasto Extra (Hoy)</button>
+                    <button class="boton boton-secundario" id="btnConfigurarGastosFijos" style="background-color:#95a5a6; border-color:#7f8c8d;">Configurar Gastos Diarios</button>
+                </div>
+
+                <div class="kpi-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div class="kpi-card" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid #2ecc71;">
+                        <div style="color: #7f8c8d; font-size: 0.9em; font-weight: bold; text-transform: uppercase;">Ingresos (Hoy)</div>
+                        <div id="kpiIngresos" style="font-size: 2em; font-weight: bold; color: #2c3e50; margin: 10px 0;">$0.00</div>
+                        <div style="font-size: 0.85em; color: #27ae60;" id="kpiIngresosTendenciaContenedor">
+                            <ion-icon name="trending-up-outline"></ion-icon> <span id="kpiIngresosTendencia">0%</span> vs ayer
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid #e74c3c;">
+                        <div style="color: #7f8c8d; font-size: 0.9em; font-weight: bold; text-transform: uppercase;">Gastos (Hoy)</div>
+                        <div id="kpiEgresos" style="font-size: 2em; font-weight: bold; color: #2c3e50; margin: 10px 0;">$0.00</div>
+                        <div style="font-size: 0.85em; color: #c0392b;" id="kpiEgresosTendenciaContenedor">
+                            <ion-icon name="trending-down-outline"></ion-icon> <span id="kpiEgresosTendencia">0%</span> vs ayer
+                        </div>
+                    </div>
+
+                    <div class="kpi-card" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid #3498db;">
+                        <div style="color: #7f8c8d; font-size: 0.9em; font-weight: bold; text-transform: uppercase;">Utilidad Neta (Hoy)</div>
+                        <div id="kpiUtilidad" style="font-size: 2em; font-weight: bold; color: #2c3e50; margin: 10px 0;">$0.00</div>
+                        <div style="font-size: 0.85em; color: #7f8c8d;">Ganancia real del día</div>
+                    </div>
+                    
+                    <div class="kpi-card" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-top: 4px solid #f39c12;">
+                        <div style="color: #7f8c8d; font-size: 0.9em; font-weight: bold; text-transform: uppercase;">Órdenes Pagadas</div>
+                        <div id="kpiOrdenes" style="font-size: 2em; font-weight: bold; color: #2c3e50; margin: 10px 0;">0</div>
+                        <div style="font-size: 0.85em; color: #7f8c8d;">Mesas cerradas hoy</div>
+                    </div>
+                </div>
+
+                <div class="charts-container" style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 30px;">
+                    <div class="chart-card" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1em;">Tendencia de Ventas (Últimos 7 días)</h3>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chartVentas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+                        <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1em;">Comparador de Fechas</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px; flex-grow: 1; justify-content: center;">
+                            <div>
+                                <label style="font-size: 0.8em; color: #7f8c8d; font-weight: bold;">FECHA 1</label>
+                                <input type="date" id="fechaA" class="input-fecha" style="width: 100%; border: 1px solid #ddd; border-radius: 5px; padding: 8px;">
+                            </div>
+                            <div style="text-align: center; font-weight: bold; color: var(--primaryorange);">VS</div>
+                            <div>
+                                <label style="font-size: 0.8em; color: #7f8c8d; font-weight: bold;">FECHA 2</label>
+                                <input type="date" id="fechaB" class="input-fecha" style="width: 100%; border: 1px solid #ddd; border-radius: 5px; padding: 8px;">
+                            </div>
+                            <button class="boton" id="btnEjecutarComparacion" style="width: 100%; margin-top: 10px;">Comparar</button>
+                        </div>
+                        <div id="resultadoComparacion" style="margin-top: 15px; text-align:center;"></div>
+                    </div>
+                </div>
+
+                <div class="efficiency-container" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
+                    <h3 style="margin-top: 0; color: #2c3e50; font-size: 1.1em; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">Métricas Operativas y Tiempos</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                        
+                        <div style="text-align: center;">
+                            <h4 style="color: #7f8c8d; font-size: 0.9em; text-transform: uppercase;">Promedio en Cocina</h4>
+                            <div style="position: relative; height: 180px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                                <canvas id="chartEficienciaCocina"></canvas>
+                                <div style="position: absolute; font-size: 1.5em; font-weight: bold; color: #2c3e50;"><span id="textoTiempoCocina">0</span><span style="font-size:0.5em; color:#7f8c8d;"> min</span></div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <h4 style="color: #7f8c8d; font-size: 0.9em; text-transform: uppercase;">Rotación de Mesas</h4>
+                            <div style="position: relative; height: 180px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                                <canvas id="chartEficienciaMesas"></canvas>
+                                <div style="position: absolute; font-size: 1.5em; font-weight: bold; color: #2c3e50;"><span id="textoTiempoMesas">0</span><span style="font-size:0.5em; color:#7f8c8d;"> min</span></div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; justify-content: center; padding-left: 15px; border-left: 1px solid #f0f0f0;">
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #555;">
+                                <li style="margin-bottom: 15px;">
+                                    <ion-icon name="rocket-outline" style="color: #e74c3c; font-size: 1.5em; vertical-align: middle;"></ion-icon>
+                                    <div style="display: inline-block; vertical-align: middle; margin-left: 10px;">
+                                        <span style="font-size: 0.85em; color: #7f8c8d; display: block;">Despacho más veloz (Hoy)</span>
+                                        <strong id="platilloRapido" style="color:#2c3e50;">Cargando...</strong>
+                                    </div>
+                                </li>
+                                <li style="margin-bottom: 15px;">
+                                    <ion-icon name="hourglass-outline" style="color: #f39c12; font-size: 1.5em; vertical-align: middle;"></ion-icon>
+                                    <div style="display: inline-block; vertical-align: middle; margin-left: 10px;">
+                                        <span style="font-size: 0.85em; color: #7f8c8d; display: block;">Despacho más lento (Hoy)</span>
+                                        <strong id="platilloLento" style="color:#2c3e50;">Cargando...</strong>
+                                    </div>
+                                </li>
+                                <li>
+                                    <ion-icon name="alert-circle-outline" style="color: #3498db; font-size: 1.5em; vertical-align: middle;"></ion-icon>
+                                    <div style="display: inline-block; vertical-align: middle; margin-left: 10px;">
+                                        <span style="font-size: 0.85em; color: #7f8c8d; display: block;">Ingredientes Riesgo (Caducidad)</span>
+                                        <strong id="ingredientesCaducidad" style="color:#2c3e50;">0 Lotes</strong>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #edf2f7; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+                        <h4 style="margin: 0 0 18px 0; color: #2c3e50; font-size: 1.05em; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">Eficiencia por Mesero</h4>
+                        <div id="meseroEficienciaList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;"></div>
+                    </div>
+                </div>
+
+                <h3 style="color: #2c3e50; font-size: 1.1em; margin-top: 30px;">Historial de Cortes Diarios</h3>
+                <div id="listaFinanzasDias" class="contenedor-pedidos"></div>
+
+                <div id="modalDetalleFinanzas" class="detalle-pedido-contenedor oculto" style="margin-top:20px;">
+                    <button class="boton botonCancelar" id="btnCerrarFinanzas">&larr; Volver</button>
+                    <h2 id="tituloDetalleFinanzas"></h2>
+                    <div style="display:flex; justify-content:space-around; margin:15px 0;">
+                        <span>Ingresos: <b id="detIngresos" style="color:#27ae60"></b></span>
+                        <span>Egresos: <b id="detEgresos" style="color:#e74c3c"></b></span>
+                        <span>Utilidad: <b id="detUtilidad"></b></span>
+                    </div>
+                    <ul id="listaMovimientosDia" class="lista-detalle"></ul>
+                </div>
+            </div>
+
+            <div id="modalGastoExtra" class="modal oculto">
+                <div class="contenidoModal">
+                    <h2>Registrar Salida de Dinero</h2>
+                    <form id="formEgresoRapido">
+                        <label>Descripción del Gasto:</label>
+                        <input type="text" id="descEgreso" placeholder="Ej. Hielos, Gasolina, Proveedor..." required>
+                        
+                        <label>Monto:</label>
+                        <input type="number" id="montoEgreso" step="0.01" min="0.1" max="50000" placeholder="0.00" required>
+                        
+                        <div class="accionesFormulario">
+                            <button type="submit" class="boton botonEliminar">Registrar Egreso</button>
+                            <button type="button" class="boton botonCancelar" id="btnCancelarGasto">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    <div id="modal" class="modal oculto">
+        <div class="contenidoModal">
+            <h2 id="tituloModal">Título del Modal</h2>
+            <form id="formulario">
+                <div id="camposDinamicos">
+                    </div>
+                
+                <div class="accionesFormulario">
+                    <button type="submit" class="boton botonGuardar">Guardar</button>
+                    <button type="button" class="boton botonCancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="panelPedidosCompletados" class="panelContenido oculto" data-seccion="pedidos_completados">
+        <h1 class="seccion">Historial de Pedidos</h1>
+        <div class="contenedorAcciones">
+            <button class="boton botonEliminar" id="btnArchivarTodos">Limpiar Historial Visual</button>
+        </div>
+        
+        <div id="listaPedidosCompletados" class="contenedor-pedidos">
+            </div>
+
+        <div id="detallePedidoCompletado" class="detalle-pedido-contenedor oculto">
+            <button class="boton botonCancelar" id="btnVolverALista">&larr; Volver a la lista</button>
+            <h2 id="detallePedidoTitulo">Detalle</h2>
+            <p id="detallePedidoTotal" style="font-size:1.2em; margin-bottom:10px;"></p>
+            
+            <h3 style="border-bottom:1px solid #eee;">Productos</h3>
+            <ul id="detalleProductosLista" class="lista-detalle"></ul>
+            
+            <h3 style="border-bottom:1px solid #eee; margin-top:15px;">Ingredientes Descontados</h3>
+            <ul id="detalleIngredientesLista" class="lista-detalle"></ul>
+        </div>
+    </div>
+    <div id="panelIA" class="panelContenido oculto" data-seccion="ia" style="flex-direction: column; height: 100%;">
+    
+    <div id="chatBox" class="chat-box">
+        <div class="bienvenida-ia" id="bienvenidaIA">
+            <ion-icon name="sparkles"></ion-icon>
+            <h2>¿Por dónde empezamos?</h2>
+            <p>Pregúntame sobre ventas, operaciones o inventario.</p>
+        </div>
+        </div>
+
+    <div class="chat-input-container">
+        <form id="formChatIA" class="chat-form">
+            <ion-icon name="sparkles-outline" class="chat-icon-left"></ion-icon>
+            <input type="text" id="inputChatIA" placeholder="Pregunta a la IA sobre tu restaurante..." autocomplete="off" required>
+            <button type="submit" id="btnEnviarIA" class="chat-btn-send">
+                <ion-icon name="send"></ion-icon>
+            </button>
+        </form>
+    </div>
+</div>        
+    <script src="restaurante.js"></script>
+    <canvas id="qrCanvas" style="display:none;"></canvas>
+
+    <button id="btnExportarQR" title="Descargar QR del Local" style="
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2em;
+        z-index: 9999;">
+        <ion-icon name="qr-code-outline"></ion-icon>
+    </button>
+</body>
+</html>

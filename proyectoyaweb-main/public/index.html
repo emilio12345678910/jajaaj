@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido - YA</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div id="gatekeeperModal" class="gatekeeper-overlay">
+    <div class="gatekeeper-content">
+        <div class="gatekeeper-icon">
+            <ion-icon name="storefront-outline"></ion-icon>
+        </div>
+        <h2>Bienvenido a YA</h2>
+        <p>Introduce el código único de tu restaurante para acceder al sistema.</p>
+        
+        <form id="formGatekeeper">
+            <div class="loguito">
+                <ion-icon name="key-outline"></ion-icon>
+                <input type="text" id="inputCodigoRestaurante" placeholder="Código del Restaurante" required autocomplete="off">
+            </div>
+            <button type="submit" style="margin-top: 15px;">Entrar al Local</button>
+            <p id="gatekeeperError" class="errormessage" style="margin-top: 10px;"></p>
+        </form>
+    </div>
+    </div>
+    <div class="container" id="container">
+        <div class="formcontainer signup">
+            <form id="formcuenta">
+                <h1>Crear una Cuenta</h1>
+                <div class="loguito">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <input type="text" id="registername" placeholder="Nombre" required>
+                </div>
+                <div class="loguito">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="email" id="registeremail" placeholder="Email" required>
+                </div>
+                <div class="loguito">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" id="registerpassword" placeholder="Contraseña" required>
+                </div>
+                <div class="loguito">
+                    <ion-icon name="briefcase-outline"></ion-icon>
+                    <select id="registerrol" style="background: transparent; border: none; width: 100%; color: #555; outline: none;">
+                        <option value="cocinero">Rol: Cocinero</option>
+                        <option value="mesero">Rol: Mesero</option>
+                    </select>
+                </div>
+                <button type="submit">Registrarse</button>
+                <div id="registererror" class="errormessage"></div>
+            </form>
+        </div>
+
+        <div class="formcontainer signin">
+            <form id="formsesion">
+                <h1>Iniciar Sesión</h1>
+                <div class="loguito">
+                    <ion-icon name="mail-outline"></ion-icon>
+                    <input type="email" id="loginemail" placeholder="Email" required>
+                </div>
+                <div class="loguito">
+                    <ion-icon name="lock-closed-outline"></ion-icon>
+                    <input type="password" id="loginpassword" placeholder="Contraseña" required>
+                </div>
+                <button type="submit">Iniciar Sesión</button>
+                <div id="loginerror" class="errormessage"></div>
+            </form>
+        </div>
+
+        <div class="overlaycontainer">
+            <div class="overlay">
+                <div class="overlaypanel overlayleft">
+                    <h1>¡Hola!</h1>
+                    <p>Regístrese con sus datos personales para usar todas las funciones del sitio</p>
+                    <button class="ghost" id="signInBtn">Iniciar Sesión</button>
+                </div>
+                <div class="overlaypanel overlayright">
+                    <h1>¡Bienvenido!</h1>
+                    <p>Ingrese sus datos personales para usar todas las funciones del sitio</p>
+                    <button class="ghost" id="signUpBtn">Registrarse</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>
