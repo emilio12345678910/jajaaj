@@ -10,7 +10,7 @@ export const COLORS = {
   success: '#2ecc71',
 };
 
-export const API_URL = 'https://proyectoyaweb.onrender.com';
+export const API_URL = 'https://jajaaj.onrender.com';
 
 export const FONT_SIZES = {
   large: 24,
