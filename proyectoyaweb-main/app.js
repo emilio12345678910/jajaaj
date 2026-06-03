@@ -1442,6 +1442,12 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             WHERE id_restaurante = ? AND DATE(fecha) = CURDATE()
         `, [id_rest]);
 
+        // Normalizar promedios a un decimal (ej. 0.4) y manejar NULLs
+        const promCocinaRaw = parseFloat(eficiencia[0].prom_cocina);
+        const promMesaRaw = parseFloat(eficiencia[0].prom_mesa);
+        const promCocina = Number.isFinite(promCocinaRaw) ? Math.round(promCocinaRaw * 10) / 10 : 0;
+        const promMesa = Number.isFinite(promMesaRaw) ? Math.round(promMesaRaw * 10) / 10 : 0;
+
         const [ordenesHoy] = await connection.query(`
             SELECT COUNT(*) as total
             FROM pedidos
@@ -1551,7 +1557,7 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             id: mesero.id,
             nombre: mesero.nombre,
             pedidosAtendidosHoy: pedidosPorMesero.get(mesero.id) || 0,
-            promedioServicioMin: Math.floor(parseFloat(eficiencia[0].prom_mesa) || 0),
+            promedioServicioMin: promMesa,
             nota: 'Eficiencia estimada según métricas generales'
         }));
 
@@ -1570,8 +1576,8 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             },
             grafica7Dias: tendencia7Dias,
             operativa: {
-                promedioCocinaMin: Math.floor(parseFloat(eficiencia[0].prom_cocina) || 0),
-                promedioMesaMin: Math.floor(parseFloat(eficiencia[0].prom_mesa) || 0),
+                promedioCocinaMin: promCocina,
+                promedioMesaMin: promMesa,
                 platilloRapido: rapido,
                 platilloLento: lento,
                 lotesEnRiesgo: riesgoCaducidad[0].total_lotes || 0
