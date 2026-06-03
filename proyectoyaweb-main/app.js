@@ -1544,6 +1544,16 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
 
         const pedidosPorMesero = new Map(conteoPorMesero.map(row => [row.id_mesero, row.total_pedidos]));
 
+        // Promedio de servicio por mesero (minutos) para HOY — si existe, usarlo por mesero
+        const [promedioPorMeseroRows] = await connection.query(`
+            SELECT id_mesero, AVG(TIMESTAMPDIFF(MINUTE, fecha_creacion, fecha_pago)) as prom_mesero
+            FROM pedidos
+            WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE() AND fecha_pago IS NOT NULL AND id_mesero IS NOT NULL
+            GROUP BY id_mesero
+        `, [id_rest]);
+
+        const promPorMesero = new Map(promedioPorMeseroRows.map(r => [r.id_mesero, Number.isFinite(parseFloat(r.prom_mesero)) ? Math.round(parseFloat(r.prom_mesero) * 10) / 10 : 0]));
+
         const meserosMap = new Map();
         meserosUsuarios.forEach(mesero => {
             meserosMap.set(`${mesero.nombre}|${mesero.rol}`, mesero);
@@ -1557,7 +1567,7 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             id: mesero.id,
             nombre: mesero.nombre,
             pedidosAtendidosHoy: pedidosPorMesero.get(mesero.id) || 0,
-            promedioServicioMin: promMesa,
+            promedioServicioMin: promPorMesero.has(mesero.id) ? promPorMesero.get(mesero.id) : promMesa,
             nota: 'Eficiencia estimada según métricas generales'
         }));
 
