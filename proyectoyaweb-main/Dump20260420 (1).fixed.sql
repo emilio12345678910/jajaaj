@@ -152,9 +152,12 @@ CREATE TABLE `mesas` (
   `numero_mesa` varchar(50) NOT NULL,
   `estado` enum('libre','ocupada') NOT NULL DEFAULT 'libre',
   `codigo_sesion` varchar(10) DEFAULT NULL,
+  `id_mesero` int DEFAULT NULL,
   PRIMARY KEY (`id_mesa`),
   KEY `fk_mesas_restaurante` (`id_restaurante`),
-  CONSTRAINT `fk_mesas_restaurante` FOREIGN KEY (`id_restaurante`) REFERENCES `restaurante` (`id_restaurante`) ON DELETE CASCADE
+  KEY `fk_mesas_mesero` (`id_mesero`),
+  CONSTRAINT `fk_mesas_restaurante` FOREIGN KEY (`id_restaurante`) REFERENCES `restaurante` (`id_restaurante`) ON DELETE CASCADE,
+  CONSTRAINT `fk_mesas_mesero` FOREIGN KEY (`id_mesero`) REFERENCES `m_usuarios` (`id_usuario`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
@@ -205,6 +208,7 @@ DROP TABLE IF EXISTS `pedidos`;
 CREATE TABLE `pedidos` (
   `id_pedido` int NOT NULL AUTO_INCREMENT,
   `id_restaurante` int NOT NULL,
+  `id_mesero` int DEFAULT NULL,
   `mesa` varchar(50) NOT NULL,
   `responsable_pedido` varchar(100) DEFAULT NULL COMMENT 'Nombre del cliente',
   `total_calculado` decimal(10,2) NOT NULL,
@@ -217,7 +221,9 @@ CREATE TABLE `pedidos` (
   `fecha_pago` datetime DEFAULT NULL COMMENT 'Cuando el cliente paga',
   PRIMARY KEY (`id_pedido`),
   KEY `fk_pedidos_restaurante` (`id_restaurante`),
-  CONSTRAINT `fk_pedidos_restaurante` FOREIGN KEY (`id_restaurante`) REFERENCES `restaurante` (`id_restaurante`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `fk_pedidos_mesero` (`id_mesero`),
+  CONSTRAINT `fk_pedidos_restaurante` FOREIGN KEY (`id_restaurante`) REFERENCES `restaurante` (`id_restaurante`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_pedidos_mesero` FOREIGN KEY (`id_mesero`) REFERENCES `m_usuarios` (`id_usuario`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 

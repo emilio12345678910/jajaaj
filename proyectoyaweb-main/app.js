@@ -1099,8 +1099,8 @@ app.post('/api/mesas/:id/ocupar', requireAuth, async (req, res) => {
         const codigo = Math.floor(Math.random() * 900) + 100;
         
         await pool.query(
-            "UPDATE mesas SET estado = 'ocupada', codigo_sesion = ? WHERE id_mesa = ? AND id_restaurante = ?",
-            [codigo, id, req.session.restauranteId]
+            "UPDATE mesas SET estado = 'ocupada', codigo_sesion = ?, id_mesero = ? WHERE id_mesa = ? AND id_restaurante = ?",
+            [codigo, req.session.userId || null, id, req.session.restauranteId]
         );
         
         res.json({ message: 'Mesa ocupada.', codigo: codigo });
@@ -1167,7 +1167,7 @@ app.post('/api/mesas/:id/liberar', requireAuth, async (req, res) => {
 
         // 3. Liberar la mesa físicamente (Borrar PIN y cambiar estado)
         await connection.query(
-            "UPDATE mesas SET estado = 'libre', codigo_sesion = NULL WHERE id_mesa = ? AND id_restaurante = ?",
+            "UPDATE mesas SET estado = 'libre', codigo_sesion = NULL, id_mesero = NULL WHERE id_mesa = ? AND id_restaurante = ?",
             [id, id_restaurante]
         );
         
@@ -1200,7 +1200,7 @@ app.post('/api/movil/pedido', async (req, res) => {
     try {
         // 1. Validar Sesión/Mesa
         const [mesaCheck] = await connection.query(
-            `SELECT numero_mesa, id_restaurante 
+            `SELECT numero_mesa, id_restaurante, id_mesero 
              FROM mesas 
              WHERE codigo_sesion = ? AND id_restaurante = ?`,
             [pin, id_restaurante]
@@ -1285,9 +1285,9 @@ app.post('/api/movil/pedido', async (req, res) => {
         // Pero ya aseguramos que *sí habrá* stock cuando eso pase.
         
         const [pedidoResult] = await connection.query(
-            `INSERT INTO pedidos (id_restaurante, mesa, responsable_pedido, total_calculado, estado, fecha_creacion)
-             VALUES (?, ?, 'App Cliente', ?, 'sin ver', NOW())`,
-            [id_restaurante, mesaReal, total_calculado]
+            `INSERT INTO pedidos (id_restaurante, mesa, responsable_pedido, total_calculado, estado, fecha_creacion, id_mesero)
+             VALUES (?, ?, 'App Cliente', ?, 'sin ver', NOW(), ?)`,
+            [id_restaurante, mesaReal, total_calculado, mesaCheck[0].id_mesero || null]
         );
         const id_pedido = pedidoResult.insertId;
 
@@ -1448,6 +1448,8 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE()
         `, [id_rest]);
 
+        const totalOrdenesHoy = parseInt(ordenesHoy[0].total, 10) || 0;
+
         // 2. KPIs de AYER (Para calcular la tendencia %)
         const [statsAyer] = await connection.query(`
             SELECT 
@@ -1527,6 +1529,15 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             [id_rest]
         );
 
+        const [conteoPorMesero] = await connection.query(`
+            SELECT id_mesero, COUNT(*) as total_pedidos
+            FROM pedidos
+            WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE() AND id_mesero IS NOT NULL
+            GROUP BY id_mesero
+        `, [id_rest]);
+
+        const pedidosPorMesero = new Map(conteoPorMesero.map(row => [row.id_mesero, row.total_pedidos]));
+
         const meserosMap = new Map();
         meserosUsuarios.forEach(mesero => {
             meserosMap.set(`${mesero.nombre}|${mesero.rol}`, mesero);
@@ -1536,12 +1547,10 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             if (!meserosMap.has(key)) meserosMap.set(key, mesero);
         });
 
-        const totalOrdenesHoy = parseInt(ordenesHoy[0].total, 10) || 0;
-
         const meserosConEficiencia = Array.from(meserosMap.values()).map(mesero => ({
             id: mesero.id,
             nombre: mesero.nombre,
-            pedidosAtendidosHoy: totalOrdenesHoy,
+            pedidosAtendidosHoy: pedidosPorMesero.get(mesero.id) || 0,
             promedioServicioMin: Math.round(parseFloat(eficiencia[0].prom_mesa) || 0),
             nota: 'Eficiencia estimada según métricas generales'
         }));
