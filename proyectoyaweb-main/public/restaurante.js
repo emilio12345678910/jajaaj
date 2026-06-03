@@ -669,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div style="background:#f8f9fa; border-radius: 10px; padding:14px; text-align:center;">
                         <div style="font-size:0.8em; color:#7f8c8d;">Promedio de servicio</div>
-                        <div style="font-size:1.4em; font-weight:700; color:#2c3e50; margin-top:5px;">${mesero.promedioServicioMin} min</div>
+                        <div style="font-size:1.4em; font-weight:700; color:#2c3e50; margin-top:5px;">${mesero.promedioServicioMin !== null && mesero.promedioServicioMin !== undefined ? (mesero.promedioServicioMin + ' min') : '—'}</div>
                     </div>
                 </div>
                 <div style="margin-top: 14px; font-size: 0.82em; color: #7f8c8d;">${escapeHTML(mesero.nota)}</div>

@@ -1563,13 +1563,19 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             if (!meserosMap.has(key)) meserosMap.set(key, mesero);
         });
 
-        const meserosConEficiencia = Array.from(meserosMap.values()).map(mesero => ({
-            id: mesero.id,
-            nombre: mesero.nombre,
-            pedidosAtendidosHoy: pedidosPorMesero.get(mesero.id) || 0,
-            promedioServicioMin: promPorMesero.has(mesero.id) ? promPorMesero.get(mesero.id) : promMesa,
-            nota: 'Eficiencia estimada según métricas generales'
-        }));
+        const meserosConEficiencia = Array.from(meserosMap.values()).map(mesero => {
+            const atendidos = pedidosPorMesero.get(mesero.id) || 0;
+            const promEspecifico = promPorMesero.has(mesero.id) ? promPorMesero.get(mesero.id) : null;
+            // Si el mesero no atendió pedidos hoy y no hay promedio específico, no devolver el promedio global
+            const promedioServicioMin = atendidos > 0 ? (promEspecifico !== null ? promEspecifico : promMesa) : null;
+            return {
+                id: mesero.id,
+                nombre: mesero.nombre,
+                pedidosAtendidosHoy: atendidos,
+                promedioServicioMin: promedioServicioMin,
+                nota: 'Eficiencia estimada según métricas generales'
+            };
+        });
 
         // 8. EMPAQUETAR Y ENVIAR
         res.json({
