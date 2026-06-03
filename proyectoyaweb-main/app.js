@@ -1442,12 +1442,6 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             WHERE id_restaurante = ? AND DATE(fecha) = CURDATE()
         `, [id_rest]);
 
-        // Normalizar promedios a un decimal (ej. 0.4) y manejar NULLs
-        const promCocinaRaw = parseFloat(eficiencia[0].prom_cocina);
-        const promMesaRaw = parseFloat(eficiencia[0].prom_mesa);
-        const promCocina = Number.isFinite(promCocinaRaw) ? Math.round(promCocinaRaw * 10) / 10 : 0;
-        const promMesa = Number.isFinite(promMesaRaw) ? Math.round(promMesaRaw * 10) / 10 : 0;
-
         const [ordenesHoy] = await connection.query(`
             SELECT COUNT(*) as total
             FROM pedidos
@@ -1485,6 +1479,12 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             FROM pedidos
             WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE() AND fecha_pago IS NOT NULL
         `, [id_rest]);
+
+        // Normalizar promedios a un decimal (ej. 0.4) y manejar NULLs
+        const promCocinaRaw = parseFloat(eficiencia[0].prom_cocina);
+        const promMesaRaw = parseFloat(eficiencia[0].prom_mesa);
+        const promCocina = Number.isFinite(promCocinaRaw) ? Math.round(promCocinaRaw * 10) / 10 : 0;
+        const promMesa = Number.isFinite(promMesaRaw) ? Math.round(promMesaRaw * 10) / 10 : 0;
 
         // 5. PLATILLO MÁS RÁPIDO Y MÁS LENTO DE HOY
         // Buscamos la diferencia de tiempo mínima y máxima
