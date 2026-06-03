@@ -1536,10 +1536,12 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             if (!meserosMap.has(key)) meserosMap.set(key, mesero);
         });
 
+        const totalOrdenesHoy = parseInt(ordenesHoy[0].total, 10) || 0;
+
         const meserosConEficiencia = Array.from(meserosMap.values()).map(mesero => ({
             id: mesero.id,
             nombre: mesero.nombre,
-            pedidosAtendidosHoy: 0,
+            pedidosAtendidosHoy: totalOrdenesHoy,
             promedioServicioMin: Math.round(parseFloat(eficiencia[0].prom_mesa) || 0),
             nota: 'Eficiencia estimada según métricas generales'
         }));
@@ -1550,7 +1552,7 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
                 hoy: {
                     ingresos: parseFloat(statsHoy[0].ingresos) || 0,
                     egresos: parseFloat(statsHoy[0].egresos) || 0,
-                    ordenes: ordenesHoy[0].total || 0
+                    ordenes: totalOrdenesHoy
                 },
                 ayer: {
                     ingresos: parseFloat(statsAyer[0].ingresos) || 0,
