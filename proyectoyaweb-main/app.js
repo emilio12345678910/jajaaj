@@ -1551,7 +1551,7 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             id: mesero.id,
             nombre: mesero.nombre,
             pedidosAtendidosHoy: pedidosPorMesero.get(mesero.id) || 0,
-            promedioServicioMin: Math.round(parseFloat(eficiencia[0].prom_mesa) || 0),
+            promedioServicioMin: Math.floor(parseFloat(eficiencia[0].prom_mesa) || 0),
             nota: 'Eficiencia estimada según métricas generales'
         }));
 
@@ -1570,8 +1570,8 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
             },
             grafica7Dias: tendencia7Dias,
             operativa: {
-                promedioCocinaMin: Math.round(parseFloat(eficiencia[0].prom_cocina) || 0),
-                promedioMesaMin: Math.round(parseFloat(eficiencia[0].prom_mesa) || 0),
+                promedioCocinaMin: Math.floor(parseFloat(eficiencia[0].prom_cocina) || 0),
+                promedioMesaMin: Math.floor(parseFloat(eficiencia[0].prom_mesa) || 0),
                 platilloRapido: rapido,
                 platilloLento: lento,
                 lotesEnRiesgo: riesgoCaducidad[0].total_lotes || 0
