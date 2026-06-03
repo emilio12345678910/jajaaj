@@ -1157,7 +1157,7 @@ app.post('/api/mesas/:id/liberar', requireAuth, async (req, res) => {
                 // Esto asegura que la mesa quede 100% limpia para el siguiente cliente
                 await connection.query(
                     `UPDATE pedidos 
-                     SET estado = 'inactivo' 
+                     SET estado = 'inactivo', fecha_pago = NOW()
                      WHERE mesa = ? AND id_restaurante = ? 
                      AND estado NOT IN ('cancelado', 'archivado', 'inactivo')`,
                     [nombreMesa, id_restaurante]
@@ -1445,7 +1445,7 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
         const [ordenesHoy] = await connection.query(`
             SELECT COUNT(*) as total
             FROM pedidos
-            WHERE id_restaurante = ? AND DATE(fecha_pago) = CURDATE() AND estado = 'inactivo'
+            WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE()
         `, [id_rest]);
 
         // 2. KPIs de AYER (Para calcular la tendencia %)
@@ -1475,7 +1475,7 @@ app.get('/api/finanzas/dashboard', requireAuth, requireOwner, async (req, res) =
                 AVG(TIMESTAMPDIFF(MINUTE, fecha_en_proceso, fecha_completado)) as prom_cocina,
                 AVG(TIMESTAMPDIFF(MINUTE, fecha_creacion, fecha_pago)) as prom_mesa
             FROM pedidos
-            WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE()
+            WHERE id_restaurante = ? AND DATE(fecha_creacion) = CURDATE() AND fecha_pago IS NOT NULL
         `, [id_rest]);
 
         // 5. PLATILLO MÁS RÁPIDO Y MÁS LENTO DE HOY
